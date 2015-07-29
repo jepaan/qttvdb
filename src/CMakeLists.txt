@@ -27,7 +27,7 @@ install(FILES
 
 set (qttvdb_SRCS mirrors.cpp episode.cpp banner.cpp show.cpp)
 
-qt4_wrap_cpp(MOC_SRCS qttvdb.h)
+qt5_wrap_cpp(MOC_SRCS qttvdb.h)
 
 if (UNIX)
   add_custom_command(
@@ -42,7 +42,7 @@ if (UNIX)
 endif ()
 
 add_library (qttvdb SHARED ${MOC_SRCS} ${qttvdb_SRCS})
-target_link_libraries( qttvdb ${QT_LIBRARIES})
+target_link_libraries( qttvdb Qt5::Core)
 
 set_target_properties(qttvdb PROPERTIES
                       VERSION ${QTTVDB_LIB_MAJOR_VERSION}.${QTTVDB_LIB_MINOR_VERSION}.${QTTVDB_LIB_PATCH_VERSION}

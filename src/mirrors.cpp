@@ -18,6 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <QtCore>
 #include <QtCore/QDebug>
 
 #include "qttvdb.h"
@@ -168,7 +169,7 @@ QUrl
 Mirrors::serverTimeUrl()
 {
   QUrl url = randomMirror(xmlMirrors(), false, QString("Updates.php"));
-  url.addQueryItem("type", "none");
+  //url.addQueryItem("type", "none");
   return url;
 }
 
@@ -176,9 +177,9 @@ QUrl
 Mirrors::searchShowUrl(const QString & showName, const QString & language)
 {
   QUrl url = randomMirror(xmlMirrors(), false, QString("GetSeries.php"));
-  url.addQueryItem("seriesname", showName);
+  //url.addQueryItem("seriesname", showName);
   if (!language.isEmpty())
-    url.addQueryItem("language", language);
+    //url.addQueryItem("language", language);
   return url;
 }
 
@@ -219,8 +220,8 @@ QUrl
 Mirrors::updatedShowsUrl(const QDateTime & period)
 {
   QUrl url = randomMirror(xmlMirrors(), true, QString("Updates.php"));
-  url.addQueryItem("time", QString("%1").arg(period.toTime_t()));
-  url.addQueryItem("type", "series");
+  //url.addQueryItem("time", QString("%1").arg(period.toTime_t()));
+  //url.addQueryItem("type", "series");
   return url;
 }
 
@@ -228,8 +229,8 @@ QUrl
 Mirrors::updatedEpisodesUrl(const QDateTime & period)
 {
   QUrl url = randomMirror(xmlMirrors(), true, QString("Updates.php"));
-  url.addQueryItem("time", QString("%1").arg(period.toTime_t()));
-  url.addQueryItem("type", "episodes");
+  //url.addQueryItem("time", QString("%1").arg(period.toTime_t()));
+  //url.addQueryItem("type", "episodes");
   return url;
 }
 
