@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@LIB_INSTALL_DIR@
+includedir=${prefix}/@INCLUDE_INSTALL_DIR@
+
+Name: QtTvDB
+Description: QtTvDB is a qt-based library to use The TV DB Xml API (http://thetvdb.com/wiki/index.php?title=Programmers_API)
+Version: @QTTVDB_LIB_MAJOR_VERSION@.@QTTVDB_LIB_MINOR_VERSION@.@QTTVDB_LIB_PATCH_VERSION@
+Requires: QtCore QtXml
+Libs: -L${libdir} -lqttvdb
+Cflags: -I${includedir}

@@ -1,0 +1,242 @@
+/* This file is part of QtTvDB
+ *
+ * Copyright (C) 2009-2011 Corentin Chary <corentin.chary@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#ifndef QTTVDB_H
+#define QTTVDB_H
+
+#include "qttvdb_export.h"
+
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
+#include <QtCore/QUrl>
+#include <QtCore/QDateTime>
+#include <QtXml/QDomNode>
+#include <QtCore/QVariant>
+#include <QtCore/QPair>
+
+#define TVDB_PROPERTY(type_, name_, getter_, setter_)			\
+private:                                                                \
+  type_ name_##_;							\
+public:									\
+  inline type_ & getter_() {						\
+      return name_##_;							\
+  }									\
+  inline type_ const & getter_() const {				\
+      return name_##_;							\
+  }									\
+  inline void setter_(type_ const & name_##__) {			\
+      name_##_ = name_##__;						\
+      emit name_##Changed();						\
+  }
+
+namespace QtTvDB {
+
+   class QTTVDB_EXPORT Mirrors : public QObject {
+	Q_OBJECT
+	TVDB_PROPERTY(QString key);
+	TVDB_PROPERTY(QList<QUrl> xmlMirrors);
+	TVDB_PROPERTY(QList<QUrl> bannerMirrors);
+	TVDB_PROPERTY(QList<QUrl> zipMirrors);
+	TVDB_PROPERTY(QStringList languages);
+
+	TVDB_PROPS();
+
+	TVDB_Q_PROPS();
+
+	TVDB_Q_SIGNALS();
+
+    public:
+	Mirrors(QObject * parent = NULL);
+	Mirrors(const QString & key, QObject *parent = NULL);
+	~Mirrors();
+
+	enum Mask {
+	  XML = 1,
+	  BANNER = 2,
+	  ZIP = 4
+	};
+
+	QUrl mirrorsUrl();
+	QUrl languagesUrl();
+	QUrl serverTimeUrl();
+	QUrl searchShowUrl(const QString & showName, const QString & language = QString());
+	QUrl showUrl(qint64 showId);
+	QUrl episodeUrl(qint64 episodeId);
+	QUrl showAndEpisodesUrl(qint64 showId, const QString & language = QString());
+	QUrl showAndEpisodesUrlZip(qint64 showId, const QString & language);
+	QUrl updatesUrl(const QString & period);
+	QUrl updatedShowsUrl(const QDateTime & period);
+	QUrl updatedEpisodesUrl(const QDateTime & period);
+	QUrl bannersUrl(qint64 showId);
+	QUrl bannerUrl(const QString & path);
+	int languageId(const QString & l);
+	QString languageById(int id);
+	QString languageNameById(int id);
+	QString languageName(const QString & l);
+	static QList< QPair < Mask, QUrl > > parseMirrors(const QString & xml);
+	static QList< QPair < Mask, QUrl > > parseMirrors(const QDomNode & node);
+	QUrl randomMirror(const QList<QUrl> & mirrors, bool key = false,
+			  const QString & postfix = QString(), bool api = true);
+    private:
+	void init();
+	QMap < QString, QPair < int, QString > > languagesDb_;
+	QMap < int, QString > languagesById_;
+    };
+
+    class QTTVDB_EXPORT Episode : public QObject {
+	Q_OBJECT
+
+	TVDB_PROPERTY(qint64 id);
+	TVDB_PROPERTY(qint64 showId);
+	TVDB_PROPERTY(qint64 seasonId);
+	TVDB_PROPERTY(QString name);
+	TVDB_PROPERTY(QString overview);
+	TVDB_PROPERTY(int season);
+	TVDB_PROPERTY(int episode);
+	TVDB_PROPERTY(QString director);
+	TVDB_PROPERTY(QStringList guestStars);
+	TVDB_PROPERTY(QString language);
+	TVDB_PROPERTY(QString productionCode);
+	TVDB_PROPERTY(QString rating);
+	TVDB_PROPERTY(QString writer);
+	TVDB_PROPERTY(QDateTime firstAired);
+	TVDB_PROPERTY(QString dvdChapter);
+	TVDB_PROPERTY(QString dvdDiscId);
+	TVDB_PROPERTY(QString dvdEpisodeNumber);
+	TVDB_PROPERTY(QString dvdSeason);
+	TVDB_PROPERTY(QString image);
+	TVDB_PROPERTY(QString airsAfterSeason);
+	TVDB_PROPERTY(QString airsBeforeSeason);
+	TVDB_PROPERTY(QString airsBeforeEpisode);
+	TVDB_PROPERTY(int combinedEpisode);
+	TVDB_PROPERTY(int combinedSeason);
+	TVDB_PROPERTY(int absoluteNumber);
+	TVDB_PROPERTY(QString epImgFlag);
+	TVDB_PROPERTY(QString imdbId);
+	TVDB_PROPERTY(QDateTime lastUpdated);
+
+	TVDB_PROPS();
+
+	TVDB_Q_PROPS();
+
+	TVDB_Q_SIGNALS();
+
+    public:
+	Episode(QObject *parent = NULL);
+	Episode(const QString & xml, QObject *parent = NULL);
+	Episode(const QDomNode & node, QObject *parent = NULL);
+	~Episode();
+
+	bool isNull();
+
+	static QList< Episode * > parseEpisodes(const QString & xml);
+	static QList< Episode * > parseEpisodes(const QDomNode & node);
+
+    private:
+	void init();
+	void init(const QDomNode &node);
+    };
+
+    class QTTVDB_EXPORT Show : public QObject {
+	Q_OBJECT
+
+	TVDB_PROPERTY(qint64 id);
+	TVDB_PROPERTY(QString name);
+	TVDB_PROPERTY(QString overview);
+	TVDB_PROPERTY(QStringList genre);
+	TVDB_PROPERTY(QStringList actors);
+	TVDB_PROPERTY(QString network);
+	TVDB_PROPERTY(QString contentRating);
+	TVDB_PROPERTY(QString rating);
+	TVDB_PROPERTY(QTime runtime);
+	TVDB_PROPERTY(QString status);
+	TVDB_PROPERTY(QString language);
+	TVDB_PROPERTY(QDateTime firstAired);
+	TVDB_PROPERTY(QString airsDay);
+	TVDB_PROPERTY(QTime airsTime);
+	TVDB_PROPERTY(QString banner);
+	TVDB_PROPERTY(QString poster);
+	TVDB_PROPERTY(QString fanArt);
+	TVDB_PROPERTY(QString imdbId);
+	TVDB_PROPERTY(QString seriesId);
+	TVDB_PROPERTY(QString zap2ItId);
+	TVDB_PROPERTY(QDateTime lastUpdated);
+
+	TVDB_PROPS();
+
+	TVDB_Q_PROPS();
+
+	TVDB_Q_SIGNALS();
+
+    public:
+	Show(QObject *parent = NULL);
+	Show(const QString & xml, QObject *parent = NULL);
+	Show(const QDomNode & node, QObject *parent = NULL);
+	~Show();
+
+	bool isNull();
+
+	static QList< Show * > parseShows(const QString & xml);
+	static QList< Show * > parseShows(const QDomNode & node);
+
+    private:
+	void init();
+	void init(const QDomNode &node);
+    };
+
+    class QTTVDB_EXPORT Banner : public QObject {
+	Q_OBJECT
+
+	TVDB_PROPERTY(qint64 id);
+	TVDB_PROPERTY(QString path);
+	TVDB_PROPERTY(QString type);
+	TVDB_PROPERTY(QString type2);
+	TVDB_PROPERTY(QString language);
+	TVDB_PROPERTY(QString season);
+
+	TVDB_PROPS();
+
+	TVDB_Q_PROPS();
+
+	TVDB_Q_SIGNALS();
+
+    public:
+	Banner(QObject *parent = NULL);
+	Banner(const QString & xml, QObject *parent = NULL);
+	Banner(const QDomNode & node, QObject *parent = NULL);
+	~Banner();
+
+	bool isNull();
+
+	static QList< Banner * > parseBanners(const QString & xml);
+	static QList< Banner * > parseBanners(const QDomNode & node);
+
+    private:
+	void init();
+	void init(const QDomNode &node);
+    };
+};
+
+Q_DECLARE_METATYPE(QtTvDB::Mirrors *);
+Q_DECLARE_METATYPE(QtTvDB::Episode *);
+Q_DECLARE_METATYPE(QtTvDB::Show *);
+Q_DECLARE_METATYPE(QtTvDB::Banner *);
+
+#endif // QTTVDB_H
