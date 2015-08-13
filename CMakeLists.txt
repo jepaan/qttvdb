@@ -51,7 +51,7 @@ ENDIF("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
 
 # Find Qt5
 find_package(Qt5Core REQUIRED)
-find_package(Qt5XmlPatternsREQUIRED)
+find_package(Qt5XmlPatterns REQUIRED)
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
