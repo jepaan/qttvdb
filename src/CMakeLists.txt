@@ -41,7 +41,7 @@ if (UNIX)
 endif ()
 
 add_library (qttvdb SHARED ${qttvdb_SRCS})
-target_link_libraries( qttvdb Qt5::Core Qt5XmlPatterns)
+target_link_libraries( qttvdb Qt5::Core Qt5Xml Qt5XmlPatterns)
 
 set_target_properties(qttvdb PROPERTIES
                       VERSION ${QTTVDB_LIB_MAJOR_VERSION}.${QTTVDB_LIB_MINOR_VERSION}.${QTTVDB_LIB_PATCH_VERSION}
